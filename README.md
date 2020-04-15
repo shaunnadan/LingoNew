@@ -1,4 +1,4 @@
-# Bingo
+# Lingo
 
 An accessible bingo web app using React and Firebase.
 
@@ -83,3 +83,4 @@ This is a prototype for which I have yet to build any tests. Use at your own ris
 ## Credits
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Full Credits on this project goto https://github.com/cordeliadillon

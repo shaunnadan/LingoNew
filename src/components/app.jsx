@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import Board from './board';
-import Instructions from './instructions';
-import LeaderBoard from './leaderboard';
-import WelcomeScreen from './welcomeScreen';
-import Header from './header';
-import firebase from '../firebase.js';
-import queryString from 'query-string';
-import './app.css';
-import '../tachyons.css';
+import Board from "./board";
+import Instructions from "./instructions";
+import LeaderBoard from "./leaderboard";
+import WelcomeScreen from "./welcomeScreen";
+import Header from "./header";
+import firebase from "../firebase.js";
+import queryString from "query-string";
+import "./app.css";
+import "../tachyons.css";
 
 class App extends Component {
   constructor(props) {
@@ -17,40 +17,54 @@ class App extends Component {
     this.state = {
       gameId: queryString.parse(props.location.search).game,
       noSuchGame: false,
-      signedIn: false,
+      signedIn: false
     };
 
-    firebase.database().ref('games/' + this.state.gameId).once('value').then((game) => {
-      this.setState({
-        noSuchGame: !game.exists(),
-        lexicon: game.child('lexicon').val(),
-        size: game.child('size').val()
-      });
-      let instructions = game.child('instructions').val();
-      if (instructions) {
+    firebase
+      .database()
+      .ref("games/" + this.state.gameId)
+      .once("value")
+      .then(game => {
         this.setState({
-          instructions: instructions.replace(/\\n/g, '\n')
+          noSuchGame: !game.exists(),
+          lexicon: game.child("lexicon").val(),
+          size: game.child("size").val()
         });
-      }
-    });
+        let instructions = game.child("instructions").val();
+        if (instructions) {
+          this.setState({
+            instructions: instructions.replace(/\\n/g, "\n")
+          });
+        }
+      });
 
-    firebase.database().ref('games/' + this.state.gameId + '/leaderboard').orderByChild('duration').on('value', (leaderboard) => {
-      const values = leaderboard.val();
-      const leaders = 
-        values ?
-          Object.values(leaderboard.val()).sort((a, b) => {
-            return a.duration - b.duration;
-          }) : [];
-      this.setState({leaders: leaders});
-    });
+    firebase
+      .database()
+      .ref("games/" + this.state.gameId + "/leaderboard")
+      .orderByChild("duration")
+      .on("value", leaderboard => {
+        const values = leaderboard.val();
+        const leaders = values
+          ? Object.values(leaderboard.val()).sort((a, b) => {
+              return a.duration - b.duration;
+            })
+          : [];
+        this.setState({ leaders: leaders });
+      });
   }
 
   renderGame() {
     return (
       <div>
-        <Board id='abc' size={this.state.size} values={this.state.lexicon} db={firebase} gameId={this.state.gameId} />
+        <Board
+          id="abc"
+          size={this.state.size}
+          values={this.state.lexicon}
+          db={firebase}
+          gameId={this.state.gameId}
+        />
         <LeaderBoard leaders={this.state.leaders} size={this.state.size} />
-        <Instructions src={this.state.instructions}/>
+        <Instructions src={this.state.instructions} />
       </div>
     );
   }
@@ -58,9 +72,11 @@ class App extends Component {
   renderLoadingScreen() {
     return (
       <div>
-        <Header/>
+        <Header />
         <main>
-          <div className="f3 pa2" aria-live='polite'>Loading...</div>
+          <div className="f3 pa2" aria-live="polite">
+            Loading...
+          </div>
         </main>
       </div>
     );
@@ -69,11 +85,11 @@ class App extends Component {
   renderWelcomeScreen() {
     return (
       <div>
-        <Header/>
+        <Header />
         <main>
           <WelcomeScreen firebase={firebase} />
         </main>
-        <Instructions/>
+        <Instructions />
       </div>
     );
   }
@@ -86,7 +102,7 @@ class App extends Component {
         } else {
           return this.renderLoadingScreen();
         }
-      } 
+      }
     }
     return this.renderWelcomeScreen();
   }

@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import momentDurationFormatSetup from 'moment-duration-format';
-import SimpleStorage from 'react-simple-storage';
-import Header from './header';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
+import momentDurationFormatSetup from "moment-duration-format";
+import SimpleStorage from "react-simple-storage";
+import Header from "./header";
 
 momentDurationFormatSetup(moment);
 
@@ -22,13 +22,12 @@ function shuffleArray(array) {
 }
 
 class Board extends Component {
-
   constructor(props) {
     super(props);
 
     const size = props.size % 2 ? props.size : props.size - 1;
     const cellCount = size * size;
-    const midpoint = (size * size - 1)/ 2;
+    const midpoint = (size * size - 1) / 2;
 
     // Ensure we have enough values to fill this size board.
     // If not, keep adding duplicate values until we do.
@@ -47,10 +46,10 @@ class Board extends Component {
       endTime: 0,
       grid: this.generateRandomGrid(values, size),
       midpoint: midpoint,
-      selection: {[midpoint]: true},
+      selection: { [midpoint]: true },
       size: size,
       startTime: Date.now(),
-      values: values,
+      values: values
     };
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -59,7 +58,7 @@ class Board extends Component {
   }
 
   /**
-   * Randomize supplied values and return 
+   * Randomize supplied values and return
    * a grid with dimensions size * size
    */
   generateRandomGrid(values, size) {
@@ -69,11 +68,11 @@ class Board extends Component {
     for (let row = 0; row < size; row++) {
       grid[row] = [];
       for (let col = 0; col < size; col++) {
-        let id = col + (row * size);
+        let id = col + row * size;
         grid[row][col] = {
           value: randomizedValues[id],
           id: id
-        }
+        };
       }
     }
 
@@ -81,15 +80,19 @@ class Board extends Component {
   }
 
   updateLeaderBoard() {
-    const name = document.getElementById('name').value;
-    if (name && name !== '') {
+    const name = document.getElementById("name").value;
+    if (name && name !== "") {
       const data = {
         name: name,
         timestamp: this.state.endTime,
         duration: this.state.endTime - this.state.startTime
       };
-      const key = this.props.db.database().ref('games/' + this.props.gameId).child('leaderboard').push(data).key;
-      this.setState({leaderboardSubmitted: true});
+      const key = this.props.db
+        .database()
+        .ref("games/" + this.props.gameId)
+        .child("leaderboard")
+        .push(data).key;
+      this.setState({ leaderboardSubmitted: true });
       return key;
     }
   }
@@ -105,7 +108,7 @@ class Board extends Component {
       bingo: false,
       grid: this.generateRandomGrid(this.state.values, this.state.size),
       leaderboardSubmitted: false,
-      selection: {[this.state.midpoint]: true},
+      selection: { [this.state.midpoint]: true },
       startTime: Date.now(),
       endTime: 0
     });
@@ -116,7 +119,9 @@ class Board extends Component {
     if (prevState.startTime === this.state.startTime) {
       // focus active cell
       if (prevState.activeCell !== this.state.activeCell) {
-        document.getElementById(this.props.id + '-cell-' + this.state.activeCell).focus();
+        document
+          .getElementById(this.props.id + "-cell-" + this.state.activeCell)
+          .focus();
       }
 
       // if selection has changed in some way, check for bingo
@@ -130,7 +135,7 @@ class Board extends Component {
           if (!this.state.bingo) {
             this.setState({
               bingo: true,
-              endTime: Date.now(),
+              endTime: Date.now()
             });
           }
         }
@@ -162,7 +167,7 @@ class Board extends Component {
 
   checkCol(col) {
     const size = this.state.size;
-    for (let j = col; j < size * size; j+= size) {
+    for (let j = col; j < size * size; j += size) {
       if (!this.state.selection[j]) {
         return false;
       }
@@ -186,7 +191,7 @@ class Board extends Component {
   /* Upper right to lower left */
   checkDiagonalB(row, col) {
     const size = this.state.size;
-    if (row === (size - col - 1)) {
+    if (row === size - col - 1) {
       for (let i = 0; i < size; i++) {
         if (!this.state.selection[size * i + size - i - 1]) {
           return false;
@@ -198,23 +203,23 @@ class Board extends Component {
 
   handleKeyDown(event, row, col) {
     switch (event.key) {
-      case 'Down':
-      case 'ArrowDown':
+      case "Down":
+      case "ArrowDown":
         if (row < this.state.size - 1) this.setActiveCell(row + 1, col);
         event.preventDefault();
         break;
-      case 'Up':
-      case 'ArrowUp':
+      case "Up":
+      case "ArrowUp":
         if (row > 0) this.setActiveCell(row - 1, col);
         event.preventDefault();
         break;
-      case 'Left':
-      case 'ArrowLeft':
+      case "Left":
+      case "ArrowLeft":
         if (col > 0) this.setActiveCell(row, col - 1);
         event.preventDefault();
         break;
-      case 'Right':
-      case 'ArrowRight':
+      case "Right":
+      case "ArrowRight":
         if (col < this.state.size - 1) this.setActiveCell(row, col + 1);
         event.preventDefault();
         break;
@@ -224,25 +229,34 @@ class Board extends Component {
   }
 
   setActiveCell(row, col) {
-    this.setState({activeCell: this.state.grid[row][col].id});
+    this.setState({ activeCell: this.state.grid[row][col].id });
   }
 
   renderMidpointCell(cellId, row, col) {
     return (
-      <td role='gridcell' key={cellId}>
-        <div className='cell-contents'>
+      <td role="gridcell" key={cellId}>
+        <div className="cell-contents">
           <button
             aria-disabled={true}
             aria-pressed={true}
-            className='cell-toggle'
-            id={this.props.id + '-cell-' + cellId}
-            onClick={() => {this.setState({activeCell : cellId});}}
-            onKeyDown={(event) => {this.handleKeyDown(event, row, col);}}
-            tabIndex={cellId === this.state.activeCell ? '0' : '-1'}
+            className="cell-toggle"
+            id={this.props.id + "-cell-" + cellId}
+            onClick={() => {
+              this.setState({ activeCell: cellId });
+            }}
+            onKeyDown={event => {
+              this.handleKeyDown(event, row, col);
+            }}
+            tabIndex={cellId === this.state.activeCell ? "0" : "-1"}
           >
-            <svg role="img" aria-labelledby="star-title" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <svg
+              role="img"
+              aria-labelledby="star-title"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
               <title id="star-title">Star (free tile)</title>
-              <path d="M12.6 1.4l2.2 7c.1.2.3.4.6.4h6.9c.7 0 1 .9.5 1.3l-5.7 4.2c-.2.1-.3.5-.2.7l2.7 7.2c.2.6-.5 1.2-1.1.7l-6-4.5c-.3-.2-.6-.2-.9 0l-6.1 4.5c-.5.5-1.3-.1-1-.7L7.1 15c.1-.2 0-.6-.3-.7l-5.6-4.2c-.6-.4-.2-1.3.4-1.3h6.9c.4 0 .6-.1.7-.4l2.2-7c.1-.7 1.1-.6 1.2 0z"></path>
+              <path d="M12.6 1.4l2.2 7c.1.2.3.4.6.4h6.9c.7 0 1 .9.5 1.3l-5.7 4.2c-.2.1-.3.5-.2.7l2.7 7.2c.2.6-.5 1.2-1.1.7l-6-4.5c-.3-.2-.6-.2-.9 0l-6.1 4.5c-.5.5-1.3-.1-1-.7L7.1 15c.1-.2 0-.6-.3-.7l-5.6-4.2c-.6-.4-.2-1.3.4-1.3h6.9c.4 0 .6-.1.7-.4l2.2-7c.1-.7 1.1-.6 1.2 0z" />
             </svg>
           </button>
         </div>
@@ -254,15 +268,17 @@ class Board extends Component {
     const isMidpoint = cell.id === this.state.midpoint;
     const selected = this.state.selection[cell.id] || isMidpoint ? true : false;
 
-    if (isMidpoint) { return this.renderMidpointCell(cell.id, row, col); }
+    if (isMidpoint) {
+      return this.renderMidpointCell(cell.id, row, col);
+    }
 
     return (
-      <td role='gridcell' key={cell.id}>
-        <div className='cell-contents'>
+      <td role="gridcell" key={cell.id}>
+        <div className="cell-contents">
           <button
             aria-pressed={selected}
-            className='cell-toggle'
-            id={this.props.id + '-cell-' + cell.id}
+            className="cell-toggle"
+            id={this.props.id + "-cell-" + cell.id}
             onClick={() => {
               let selection = copyObject(this.state.selection);
               selection[cell.id] = !selected;
@@ -274,8 +290,10 @@ class Board extends Component {
                 activeCol: col
               });
             }}
-            onKeyDown={(event) => {this.handleKeyDown(event, row, col);}}
-            tabIndex={cell.id === this.state.activeCell ? '0' : '-1'}
+            onKeyDown={event => {
+              this.handleKeyDown(event, row, col);
+            }}
+            tabIndex={cell.id === this.state.activeCell ? "0" : "-1"}
           >
             {cell.value}
           </button>
@@ -286,8 +304,10 @@ class Board extends Component {
 
   renderRow(row, y) {
     return (
-      <tr role='row' key={y}>
-        {row.map((cell, x) => { return this.renderCell(cell, y, x); })}
+      <tr role="row" key={y}>
+        {row.map((cell, x) => {
+          return this.renderCell(cell, y, x);
+        })}
       </tr>
     );
   }
@@ -296,24 +316,26 @@ class Board extends Component {
     if (this.state.bingo) {
       if (this.state.leaderboardSubmitted) {
         return (
-          <p className='lh-copy mb0'>
-            You're on the leaderboard!{' '}
-            Keep playing on this bingo board or{' '}
+          <p className="lh-copy mb0">
+            You're on the leaderboard! Keep playing on this bingo board or{" "}
             <button onClick={this.refreshBoard}>generate a new one</button>.
           </p>
         );
       } else {
         return (
-          <div className='pt3'>
-            <label htmlFor='name'>Enter a name to display on the leaderboard:</label>
-            <div className='pv2'>
+          <div className="pt3">
+            <label htmlFor="name">
+              Enter a name to display on the leaderboard:
+            </label>
+            <div className="pv2">
               <input
-                style={{'backgroundColor': '#f6f7fa'}}
-                className='input-reset pa3 mb2 ba bw1 b--black'
-                id='name'
-                placeholder='Your Name' />
+                style={{ backgroundColor: "#f6f7fa" }}
+                className="input-reset pa3 mb2 ba bw1 b--black"
+                id="name"
+                placeholder="Your Name"
+              />
               <button
-                className='tc fw8 blue-button white pa3 ml2 ba bw1 b--black'
+                className="tc fw8 blue-button white pa3 ml2 ba bw1 b--black"
                 onClick={this.updateLeaderBoard}
               >
                 Add me!
@@ -329,20 +351,32 @@ class Board extends Component {
   renderSuccess() {
     if (this.state.bingo) {
       return (
-        <div className='success maxw-95 pa3 mv3'>
-          <div className='flex flex-wrap items-center justify-between'>
-            <div className='w-50-l w-100 tc tl-l' role='alert' aria-live='assertive'>
-              <span className='f2 fw8'>You got bingo! <span role="img" aria-label="Hurray!">🎉</span></span>
-              <div className='f3 pt2'>
-                Total time: {moment.duration(this.state.endTime - this.state.startTime).format('h [hr], m [min], s [sec]')}
+        <div className="success maxw-95 pa3 mv3">
+          <div className="flex flex-wrap items-center justify-between">
+            <div
+              className="w-50-l w-100 tc tl-l"
+              role="alert"
+              aria-live="assertive"
+            >
+              <span className="f2 fw8">
+                You got bingo!{" "}
+                <span role="img" aria-label="Hurray!">
+                  🎉
+                </span>
+              </span>
+              <div className="f3 pt2">
+                Total time:{" "}
+                {moment
+                  .duration(this.state.endTime - this.state.startTime)
+                  .format("h [hr], m [min], s [sec]")}
               </div>
             </div>
-            <div className='w-50-l w-100 tc tr-l'>
+            <div className="w-50-l w-100 tc tr-l">
               {this.renderLeaderboardPrompt()}
             </div>
           </div>
         </div>
-      )
+      );
     }
     return null;
   }
@@ -352,26 +386,28 @@ class Board extends Component {
       <div>
         <Header gotBingo={this.state.bingo}>
           <button
-            className='tc fw8 bg-white black pa3 ba bw1 b--black mb2'
+            className="tc fw8 bg-white black pa3 ba bw1 b--black mb2"
             onClick={this.refreshBoard}
           >
             New Board
           </button>
         </Header>
         <main>
-          <table role='grid' className='maxw-95'>
-            <tbody role='rowgroup'>
-              {this.state.grid.map((row, y) => { return (this.renderRow(row, y))})}
+          <table role="grid" className="maxw-95">
+            <tbody role="rowgroup">
+              {this.state.grid.map((row, y) => {
+                return this.renderRow(row, y);
+              })}
             </tbody>
           </table>
           {this.renderSuccess()}
         </main>
-        { /* Stores current board state in local storage so
-             game is preserved even when refreshed */ }
+        {/* Stores current board state in local storage so
+             game is preserved even when refreshed */}
         <SimpleStorage
           parent={this}
           prefix={`bingo-${this.props.gameId}`}
-          blacklist={['activeCell', 'activeRow', 'activeCol', 'values']}
+          blacklist={["activeCell", "activeRow", "activeCol", "values"]}
         />
       </div>
     );
@@ -381,11 +417,11 @@ class Board extends Component {
 Board.propTypes = {
   size: PropTypes.number,
   values: PropTypes.array
-}
+};
 
 Board.defaultProps = {
   size: 5,
-  values: 'abcdefghijklmnopqrstuv'.split('')
-}
+  values: "abcdefghijklmnopqrstuv".split("")
+};
 
 export default Board;

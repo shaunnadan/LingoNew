@@ -14,10 +14,11 @@ Firebase - Realtime Database (SparkPlan)
 
 React JS
 
+### Hosting
+
+AWS Amplify
+
+
 ## Disclaimers
 
 This is a prototype for which I have yet to build any tests. Use at your own risk.
-
-## Credits
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app)

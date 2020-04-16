@@ -19,7 +19,7 @@ class Instructions extends Component {
   render() {
     return (
       <aside className='maxw-95 instructions' aria-label="Instructions">
-        <h2 className="pv2 bb-3">Instructions</h2>
+        <h2 className="pv2 bb-3">Information</h2>
         {this.props.src ? <ReactMarkdown source={this.props.src}/> : this.renderDefault()}
       </aside>
     );

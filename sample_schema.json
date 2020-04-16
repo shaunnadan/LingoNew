@@ -1,8 +1,8 @@
 {
   "games" : {
     "lingo" : {
-      "instructions" : "### The Basics ###",
-                         " Press tiles as phrases come up",
+      "instructions" : "### The Basics ###"
+                         " Press tiles as phrases come up"
       "lexicon" : [
         "hi, can you hear me?",
         "who just joined?",

@@ -18,7 +18,7 @@ class WelcomeScreen extends Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <h2>Ready to join a game?</h2>
+        <h2>Type in  a11y  to start</h2>
         <div>
           <label htmlFor='boardName' className='f6 b db mb2'>Board Name</label>
           <input

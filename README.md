@@ -12,8 +12,7 @@ Firebase - Realtime Database (SparkPlan)
 
 ### Application
 
-ReAct JS
-
+React JS
 
 ## Disclaimers
 
